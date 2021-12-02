@@ -143,8 +143,6 @@ def main():
 
                         name_grab = webpage.grab_text_with_xpath("/html[1]/body[1]/div[6]/div[3]/div[1]/div[1]/div[1]/div[1]/div[3]/div[1]/div[1]/main[1]/div[1]/section[1]/div[2]/div[2]/div[1]/div[1]/h1[1]")
 
-                        log(name_grab)
-
                         webpage.click_with_xpath("/html[1]/body[1]/div[6]/div[3]/div[1]/div[1]/div[1]/div[1]/div[3]/div[1]/div[1]/main[1]/div[1]/section[1]/div[2]/div[3]/div[1]/button[1]")
                         
                         time.sleep(0)
