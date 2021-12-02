@@ -49,25 +49,25 @@ class Webpage:
     def visit(self, url):
         driver.get(url)
     
-    # clicks the element selected using CSS Selector
-    def click_with_css_selector(self, css_selector):
-        driver.find_element_by_css_selector(css_selector).click()
+    # clicks the element selected using absolute xpath
+    def click_with_xpath(self, xpath):
+        driver.find_element_by_xpath(xpath).click()
     
-    # gets the element selected using CSS Selector
-    def grab_element_with_css_selector(self, css_selector):
-        return driver.find_element_by_css_selector(css_selector)
+    # gets the element selected using absolute xpath
+    def grab_element_with_xpath(self, xpath):
+        return driver.find_element_by_xpath(xpath)
     
-    # gets the elements* selected using CSS Selector
-    def grab_elements_with_css_selector(self, css_selector):
-        return driver.find_elements_by_css_selector(css_selector)
+    # gets the elements* selected using absolute xpath
+    def grab_elements_with_xpath(self, xpath):
+        return driver.find_elements_by_xpath(xpath)
 
-    # sends the entered text to the element selected using CSS Selector
-    def type_value_with_css_selector(self, css_selector, keys):
-        driver.find_element_by_css_selector(css_selector).send_keys(keys)
+    # sends the entered text to the element selected using absolute xpath
+    def type_value_with_xpath(self, xpath, keys):
+        driver.find_element_by_xpath(xpath).send_keys(keys)
     
-    # gets the text from the element selected using CSS Selector
-    def grab_text_with_css_selector(self, css_selector):
-        return driver.find_element_by_css_selector(css_selector).text
+    # gets the text from the element selected using absolute xpath
+    def grab_text_with_xpath(self, xpath):
+        return driver.find_element_by_xpath(xpath).text
     
     # returns the url of the current page
     def get_url(self):
@@ -113,9 +113,9 @@ def main():
     
     webpage.visit("https://www.linkedin.com/login")
     
-    webpage.type_value_with_css_selector("input[id='username']", user.username) 
-    webpage.type_value_with_css_selector("input[id='password']", user.password)
-    webpage.click_with_css_selector("button[type='submit']")
+    webpage.type_value_with_xpath("/html[1]/body[1]/div[1]/main[1]/div[2]/div[1]/form[1]/div[1]/input[1]", user.username) 
+    webpage.type_value_with_xpath("/html[1]/body[1]/div[1]/main[1]/div[2]/div[1]/form[1]/div[2]/input[1]", user.password)
+    webpage.click_with_xpath("/html[1]/body[1]/div[1]/main[1]/div[2]/div[1]/form[1]/div[3]/button[1]")
     
     for keyword in list(constants.commaseparated.split(';')):
         for page in range(1, int(constants.upto_page) + 1):
@@ -124,7 +124,7 @@ def main():
             link = "https://www.linkedin.com/search/results/people/?keywords=" + keyword + "&origin=CLUSTER_EXPANSION&page=" + str(page)
             webpage.visit(link)
             
-            list_of_cards = list(webpage.grab_elements_with_css_selector("li[class='reusable-search__result-container ']"))
+            list_of_cards = list(driver.find_elements_by_css_selector("li[class='reusable-search__result-container ']"))
             
             log(f"a total of {len(list_of_cards)} Connections found on page {page} for {keyword}")
             
@@ -132,27 +132,28 @@ def main():
                 time.sleep(2)
                 
                 try:                    
-                    button_on_card = webpage.grab_element_with_css_selector(f"li[class= 'reusable-search__result-container ']:nth-child({i}) button").is_enabled()
+                    button_on_card = webpage.grab_element_with_xpath(f"/html[1]/body[1]/div[6]/div[3]/div[1]/div[2]/div[1]/div[1]/main[1]/div[1]/div[1]/div[3]/ul[1]/li[{i}]/div[1]/div[1]/div[3]/button[1]").is_enabled()
             
-                    button_text = webpage.grab_text_with_css_selector(f"li[class= 'reusable-search__result-container ']:nth-child({i}) button span")
+                    button_text = webpage.grab_text_with_xpath(f"/html[1]/body[1]/div[6]/div[3]/div[1]/div[2]/div[1]/div[1]/main[1]/div[1]/div[1]/div[3]/ul[1]/li[{i}]/div[1]/div[1]/div[3]/button[1]/span[1]")
                     
                     if button_on_card == True and button_text == 'Connect':
-                        time.sleep(2)
-                        webpage.click_with_css_selector(f"li[class= 'reusable-search__result-container ']:nth-child({i}) span a span span")
-                        
-                        time.sleep(2)
+                        webpage.click_with_xpath(f"/html[1]/body[1]/div[6]/div[3]/div[1]/div[2]/div[1]/div[1]/main[1]/div[1]/div[1]/div[3]/ul[1]/li[{i}]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/span[1]/span[1]/a[1]/span[1]/span[1]")
 
-                        name_grab = webpage.grab_text_with_css_selector("h1")
+                        browser.wait(2)
+
+                        name_grab = webpage.grab_text_with_xpath("/html[1]/body[1]/div[6]/div[3]/div[1]/div[1]/div[1]/div[1]/div[3]/div[1]/div[1]/main[1]/div[1]/section[1]/div[2]/div[2]/div[1]/div[1]/h1[1]")
+
+                        log(name_grab)
+
+                        webpage.click_with_xpath("/html[1]/body[1]/div[6]/div[3]/div[1]/div[1]/div[1]/div[1]/div[3]/div[1]/div[1]/main[1]/div[1]/section[1]/div[2]/div[3]/div[1]/button[1]")
                         
-                        # webpage.click_with_css_selector("button[data-control-name='connect']")
-                        webpage.click_with_css_selector("button[class= 'artdeco-button artdeco-button--2 artdeco-button--primary ember-view pvs-profile-actions__action']")
-                        time.sleep(2)
+                        time.sleep(0)
+
+                        webpage.click_with_xpath("/html[1]/body[1]/div[3]/div[1]/div[1]/div[3]/button[2]")
                         
-                        webpage.click_with_css_selector("button[aria-label='Send now']")
+                        description1 = webpage.grab_text_with_xpath("/html[1]/body[1]/div[6]/div[3]/div[1]/div[1]/div[1]/div[1]/div[3]/div[1]/div[1]/main[1]/div[1]/section[1]/div[2]/div[2]/div[1]/div[2]")
                         
-                        description1 = webpage.grab_text_with_css_selector("div[class= 'text-body-medium break-words']")
-                        
-                        description2 = webpage.grab_text_with_css_selector("span[class = 'text-body-small inline t-black--light break-words']")
+                        description2 = webpage.grab_text_with_xpath("/html[1]/body[1]/div[6]/div[3]/div[1]/div[1]/div[1]/div[1]/div[3]/div[1]/div[1]/main[1]/div[1]/section[1]/div[2]/div[2]/div[2]/span[1]")
                         
                         link_to_profile = webpage.get_url()
                         
@@ -164,11 +165,11 @@ def main():
                         
                         csv_io.insert_row(info)
                         
-                        time.sleep(2)
+                        time.sleep(1)
                         
                     webpage.visit(link)
                     
-                    browser.wait(2)
+                    browser.wait(5)
                 
                 except NoSuchElementException:
                     pass
@@ -176,8 +177,7 @@ def main():
                     log(e)
                     
         log(f"{constants.Bcolors.UNDERLINE} All New Connection's data appended to dataset.csv {constants.Bcolors.ENDC}")
+    browser.end_session()
         
-        browser.end_session()
-        
-        csv_io.insert_row(["---------","----------","----------","-------------"])
+    csv_io.insert_row(["---------","----------","----------","-------------"])
 
